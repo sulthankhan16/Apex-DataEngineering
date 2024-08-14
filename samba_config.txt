@@ -1,0 +1,61 @@
+sudo dnf install samba samba-common samba-client -y
+sudo mkdir -p /srv/samba/share
+
+Set permissions for the shared directory:
+
+sudo chmod 777 /srv/samba/share
+
+Backup samba conf file :
+sudo cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+
+
+Edit Samba conf file :
+sudo nano /etc/samba/smb.conf
+
+Add the following at end :
+[share]
+   path = /srv/samba/share
+   browseable = yes
+   writable = yes
+   guest ok = yes
+   create mask = 0777
+   directory mask = 0777
+   
+ 
+Start the Samba services:
+
+sudo systemctl start smb
+sudo systemctl start nmb
+
+Enable the services to start at boot:
+
+sudo systemctl enable smb
+sudo systemctl enable nmb
+
+
+Optional :
+
+sudo smbpasswd -a username
+Enter password
+
+Map the Samba user to a system user:
+
+sudo useradd username
+
+
+Configure Firewall :
+
+sudo firewall-cmd --permanent --add-service=samba
+sudo firewall-cmd --reload
+
+To access :
+
+Windows:
+
+Open File Explorer.
+Type \\<Fedora_IP_Address>\share in the address bar.
+Linux:
+
+Open a file manager.
+Access the shared folder using smb://<Fedora_IP_Address>/share.
+Replace <Fedora_IP_Address> with the IP address of your Fedora machine.
